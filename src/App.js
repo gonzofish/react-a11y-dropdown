@@ -1,24 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
+import Dropdown from './components/Dropdown/Dropdown';
+
+const MY_ITEMS = [
+  {
+    id: 'pizza',
+    label: 'Pizza'
+  },
+  {
+    id: 'hamburger',
+    label: 'Burger',
+  },
+  {
+    id: 'ice-cream',
+    label: 'Ice Cream'
+  },
+  {
+    id: 'taco',
+    label: 'Taco',
+  }
+]
+
 function App() {
+  const [selected, setSelected] = useState(null);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Dropdown
+        id="my-dropdown"
+        items={MY_ITEMS}
+        label="My Dropdown"
+        onSelect={(id) => {
+          setSelected(id);
+        }}
+        selected={selected}
+      />
     </div>
   );
 }
