@@ -1,4 +1,6 @@
 import React, {
+  useCallback,
+  useEffect,
   useState
 } from 'react';
 import PropTypes from 'prop-types'
@@ -8,8 +10,23 @@ import DropdownList from '../DropdownList/DropdownList';
 
 const Dropdown = ({ id, items, label, onSelect, selected }) => {
   const [open, setOpen] = useState(false);
+  const [triggerLabel, setTriggerLabel] = useState('');
   const labelId = `${id}-label`;
   const triggerId = `${id}-trigger`;
+  const selectCallback = useCallback(onSelect);
+
+  useEffect(() => {
+    const selectedItem = getSelectedItem(items, selected);
+    const selectedLabel = selectedItem.label;
+
+    if (selectedLabel !== triggerLabel) {
+      setTriggerLabel(selectedLabel);
+    }
+
+    if (selectedItem.id !== selected) {
+      selectCallback(selectedItem.id);
+    }
+  }, [items, label, selected, selectCallback, triggerLabel]);
 
   return (
     <div className="a11y-dropdown">
@@ -17,12 +34,13 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
         htmlFor={triggerId}
         id={labelId}
       >
+        {label}:
       </label>
 
       <DropdownTrigger
         active={selected}
         id={triggerId}
-        label={label}
+        label={triggerLabel}
         labelId={labelId}
         onClick={() => {
           setOpen(!open);
@@ -33,12 +51,27 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
           id={`${id}-list`}
           items={items}
           labelId={labelId}
-          onSelect={onSelect}
+          onSelect={(id) => {
+            selectCallback(id);
+            setOpen(false);
+          }}
           selected={selected}
         />
       )}
     </div>
   )
+};
+
+const getSelectedItem = (items, selected) => {
+  let selectedItem;
+
+  if (selected) {
+    selectedItem = items.find(({ id }) => id === selected);
+  } else {
+    [selectedItem] = items;
+  }
+
+  return selectedItem;
 };
 
 Dropdown.defaultProps = {

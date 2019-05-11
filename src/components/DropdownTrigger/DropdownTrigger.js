@@ -7,7 +7,7 @@ const DropdownTrigger = ({ id, label, labelId, onClick }) => {
   return (
     <div className="dropdown-trigger">
       <button
-        aria-labelledby={labelId}
+        aria-labelledby={`${labelId} ${id}`}
         aria-haspopup="listbox"
         id={id}
         onClick={onClick}
