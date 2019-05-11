@@ -36,7 +36,10 @@ function App() {
         }}
         selected={selected}
       />
+
+      <p>Here's some content after the dropdown</p>
     </div>
+
   );
 }
 

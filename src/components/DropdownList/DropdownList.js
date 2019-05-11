@@ -2,24 +2,26 @@ import React, {
   useCallback,
   useEffect,
   useRef,
-} from 'react'
+} from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types'
 
 import './dropdown-list.scss';
 
-const DropdownList = ({ id, items, labelId, onSelect, selected }) => {
+const DropdownList = ({ id, items, labelId, onSelect, selected, triggerId }) => {
   const selectedIndex = useRef(-1);
   const ref = useCallback((list) => {
     if (list) {
       list.focus();
+      positionList(list, triggerId);
     }
-  }, []);
+  }, [triggerId]);
 
   useEffect(() => {
     selectedIndex.current = items.findIndex((item) => item.id === selected);
   }, [items, selected]);
 
-  return (
+  return createPortal(
     <ul
       aria-activedescendant={selected}
       aria-labelledby={labelId}
@@ -38,6 +40,8 @@ const DropdownList = ({ id, items, labelId, onSelect, selected }) => {
 
         if (newIndex !== index) {
           onSelect(items[newIndex].id, false);
+        } else if (key === 'Enter' || key === 'Escape') {
+          onSelect(selected);
         }
       }}
       ref={ref}
@@ -57,9 +61,26 @@ const DropdownList = ({ id, items, labelId, onSelect, selected }) => {
           {item.label}
         </li>
       ))}
-    </ul>
-  )
-}
+    </ul>,
+    document.body,
+  );
+};
+
+/**
+ *
+ * @param {HTMLElement} list
+ * @param {String} triggerId
+ */
+const positionList = (list, triggerId) => {
+  const trigger = document.getElementById(triggerId);
+  const {
+    bottom,
+    left,
+  } = trigger.getBoundingClientRect();
+
+  list.style.left = `${left}px`;
+  list.style.top = `${bottom}px`;
+};
 
 const getIndexChange = (key) => {
   switch (key) {
@@ -85,6 +106,7 @@ DropdownList.propTypes = {
   labelId: PropTypes.string.isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.string,
+  triggerId: PropTypes.string.isRequired,
 }
 
 export default DropdownList

@@ -60,6 +60,7 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
             }
           }}
           selected={selected}
+          triggerId={triggerId}
         />
       )}
     </div>

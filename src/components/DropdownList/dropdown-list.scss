@@ -1,10 +1,23 @@
 ul.dropdown-list {
+  background-color: white;
+  border: 2px solid black;
   list-style-type: none;
   margin: 0;
   padding: 0;
+  position: absolute;
+  z-index: 1;
 
-  li[aria-selected="true"] {
-    background-color: grey;
-    font-weight: bold;
+  li {
+    border: 2px dashed transparent;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      border-color: black;
+    }
+    &[aria-selected="true"] {
+      background-color: #00cfff;
+      font-weight: bold;
+    }
   }
 }
