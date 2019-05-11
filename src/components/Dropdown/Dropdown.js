@@ -45,15 +45,19 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
         onClick={() => {
           setOpen(!open);
         }}
+        open={open}
       />
       {open && (
         <DropdownList
           id={`${id}-list`}
           items={items}
           labelId={labelId}
-          onSelect={(id) => {
+          onSelect={(id, close = true) => {
             selectCallback(id);
-            setOpen(false);
+
+            if (close) {
+              setOpen(false);
+            }
           }}
           selected={selected}
         />

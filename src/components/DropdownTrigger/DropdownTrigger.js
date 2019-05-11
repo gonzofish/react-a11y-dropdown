@@ -3,10 +3,11 @@ import PropTypes from 'prop-types'
 
 import './dropdown-trigger.scss';
 
-const DropdownTrigger = ({ id, label, labelId, onClick }) => {
+const DropdownTrigger = ({ id, label, labelId, onClick, open }) => {
   return (
     <div className="dropdown-trigger">
       <button
+        aria-expanded={open}
         aria-labelledby={`${labelId} ${id}`}
         aria-haspopup="listbox"
         id={id}
@@ -32,6 +33,7 @@ DropdownTrigger.propTypes = {
   label: PropTypes.string.isRequired,
   labelId: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
 }
 
 export default DropdownTrigger

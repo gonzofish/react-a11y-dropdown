@@ -4,6 +4,7 @@ ul.dropdown-list {
   padding: 0;
 
   li[aria-selected="true"] {
+    background-color: grey;
     font-weight: bold;
   }
 }
