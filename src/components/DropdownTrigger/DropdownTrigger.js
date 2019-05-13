@@ -11,7 +11,14 @@ const DropdownTrigger = ({ id, label, labelId, onClick, open }) => {
         aria-labelledby={`${labelId} ${id}`}
         aria-haspopup="listbox"
         id={id}
-        onClick={onClick}
+        onClick={(event) => {
+          console.info('...button click...');
+          onClick(event);
+        }}
+        onFocus={(event) => {
+          console.info('...button focus...');
+          event.preventDefault();
+        }}
         title={label}
         type="button"
       >

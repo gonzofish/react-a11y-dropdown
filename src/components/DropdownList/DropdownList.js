@@ -10,12 +10,22 @@ import './dropdown-list.scss';
 
 const DropdownList = ({ id, items, labelId, onSelect, selected, triggerId }) => {
   const selectedIndex = useRef(-1);
+  const outsideClick = useRef(null);
+  const outsideClickHandler = useRef(() => {
+    onSelect(selected, true, false);
+  });
   const ref = useCallback((list) => {
     if (list) {
+      outsideClick.current = startOutsideClick(
+        list,
+        outsideClickHandler.current,
+      );
       list.focus();
       positionList(list, triggerId);
+    } else {
+      stopOutsideClick(outsideClick.current);
     }
-  }, [triggerId]);
+  }, [triggerId, outsideClickHandler]);
 
   useEffect(() => {
     selectedIndex.current = items.findIndex((item) => item.id === selected);
@@ -66,6 +76,22 @@ const DropdownList = ({ id, items, labelId, onSelect, selected, triggerId }) => 
   );
 };
 
+const startOutsideClick = (item, onOutsideClick) => {
+  const handler = ({ target }) => {
+    if (!item.contains(target)) {
+      onOutsideClick();
+    }
+  };
+
+  document.addEventListener('click', handler);
+
+  return handler;
+};
+
+const stopOutsideClick = (handler) => {
+  document.removeEventListener('click', handler);
+};
+
 /**
  *
  * @param {HTMLElement} list
@@ -91,7 +117,7 @@ const getIndexChange = (key) => {
     default:
       return 0;
   }
-}
+};
 
 DropdownList.defaultProps = {
   selected: null,

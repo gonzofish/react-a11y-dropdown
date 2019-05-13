@@ -42,7 +42,8 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
         id={triggerId}
         label={triggerLabel}
         labelId={labelId}
-        onClick={() => {
+        onClick={(event) => {
+          console.info(event.type)
           setOpen(!open);
         }}
         open={open}
@@ -52,11 +53,14 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
           id={`${id}-list`}
           items={items}
           labelId={labelId}
-          onSelect={(id, close = true) => {
+          onSelect={(id, close = true, focusButton = true) => {
             selectCallback(id);
 
             if (close) {
               setOpen(false);
+              focusButton && setTimeout(() => (
+                document.getElementById(triggerId).focus()
+              ));
             }
           }}
           selected={selected}
