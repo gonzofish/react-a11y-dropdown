@@ -8,24 +8,30 @@ import PropTypes from 'prop-types'
 
 import './dropdown-list.scss';
 
-const DropdownList = ({ id, items, labelId, onSelect, selected, triggerId }) => {
+const DropdownList = ({ containers, id, items, labelId, maxHeight, onSelect, selected, triggerId }) => {
   const selectedIndex = useRef(-1);
   const outsideClick = useRef(null);
   const outsideClickHandler = useRef(() => {
     onSelect(selected, true, false);
   });
+  const scroll = useRef(null);
   const ref = useCallback((list) => {
     if (list) {
       outsideClick.current = startOutsideClick(
         list,
         outsideClickHandler.current,
       );
-      list.focus();
-      positionList(list, triggerId);
+      scroll.current = startWindowChange(
+        list,
+        triggerId,
+        containers,
+      );
+      focusList(list, triggerId);
     } else {
       stopOutsideClick(outsideClick.current);
+      stopWindowChange(scroll.current, containers);
     }
-  }, [triggerId, outsideClickHandler]);
+  }, [triggerId, containers]);
 
   useEffect(() => {
     selectedIndex.current = items.findIndex((item) => item.id === selected);
@@ -56,6 +62,10 @@ const DropdownList = ({ id, items, labelId, onSelect, selected, triggerId }) => 
       }}
       ref={ref}
       role="listbox"
+      style={maxHeight && maxHeight > 0
+        ? { maxHeight: `${maxHeight}px`, overflow: 'auto' }
+        : null
+      }
       tabIndex="0"
     >
       {items.map((item) => (
@@ -92,6 +102,55 @@ const stopOutsideClick = (handler) => {
   document.removeEventListener('click', handler);
 };
 
+const startWindowChange = (list, triggerId, containers) => {
+  const handler = () => {
+    positionList(list, triggerId);
+  };
+  const addListeners = (element) => {
+    element.addEventListener('resize', handler)
+    element.addEventListener('scroll', handler)
+
+  }
+
+  addListeners(window);
+  setContainerListeners(containers, addListeners);
+
+  return handler;
+}
+
+const stopWindowChange = (handler, containers) => {
+  const removeListeners = (element) => {
+    element.removeEventListener('resize', handler)
+    element.removeEventListener('scroll', handler)
+  }
+
+  removeListeners(window);
+  setContainerListeners(containers, removeListeners);
+};
+
+const setContainerListeners = (containers, fn) => {
+  if (containers) {
+    containers.forEach((containerId) => {
+      const container = document.getElementById(containerId);
+
+      if (container) {
+        fn(container);
+      }
+    });
+  }
+};
+
+const focusList = (list, triggerId) => {
+  const {
+    scrollX,
+    scrollY,
+  } = window;
+
+  list.focus();
+  positionList(list, triggerId);
+  window.scrollTo(scrollX, scrollY);
+}
+
 /**
  *
  * @param {HTMLElement} list
@@ -103,9 +162,10 @@ const positionList = (list, triggerId) => {
     bottom,
     left,
   } = trigger.getBoundingClientRect();
+  const { scrollX, scrollY } = window;
 
-  list.style.left = `${left}px`;
-  list.style.top = `${bottom}px`;
+  list.style.left = `${left + scrollX}px`;
+  list.style.top = `${bottom + scrollY}px`;
 };
 
 const getIndexChange = (key) => {
@@ -120,16 +180,20 @@ const getIndexChange = (key) => {
 };
 
 DropdownList.defaultProps = {
+  containers: null,
+  maxHeight: null,
   selected: null,
 }
 
 DropdownList.propTypes = {
+  containers: PropTypes.arrayOf(PropTypes.string),
   id: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
   })),
   labelId: PropTypes.string.isRequired,
+  maxHeight: PropTypes.number,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.string,
   triggerId: PropTypes.string.isRequired,

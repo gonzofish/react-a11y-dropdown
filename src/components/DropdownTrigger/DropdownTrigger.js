@@ -5,30 +5,24 @@ import './dropdown-trigger.scss';
 
 const DropdownTrigger = ({ id, label, labelId, onClick, open }) => {
   return (
-    <div className="dropdown-trigger">
-      <button
-        aria-expanded={open}
-        aria-labelledby={`${labelId} ${id}`}
-        aria-haspopup="listbox"
-        id={id}
-        onClick={(event) => {
-          console.info('...button click...');
-          onClick(event);
-        }}
-        onFocus={(event) => {
-          console.info('...button focus...');
-          event.preventDefault();
-        }}
-        title={label}
-        type="button"
-      >
-        <span className="dropdown-trigger--label">
-          {label}
-        </span>
+    <button
+      aria-expanded={open}
+      aria-labelledby={`${labelId} ${id}`}
+      aria-haspopup="listbox"
+      className="dropdown-trigger"
+      id={id}
+      onClick={(event) => {
+        onClick(event);
+      }}
+      title={label}
+      type="button"
+    >
+      <span className="dropdown-trigger--label">
+        {label}
+      </span>
 
-        <span className="dropdown-trigger--arrow" />
-      </button>
-    </div>
+      <span className="dropdown-trigger--arrow" />
+    </button>
   )
 }
 

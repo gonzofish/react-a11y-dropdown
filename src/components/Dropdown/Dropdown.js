@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
 import DropdownTrigger from '../DropdownTrigger/DropdownTrigger';
 import DropdownList from '../DropdownList/DropdownList';
 
-const Dropdown = ({ id, items, label, onSelect, selected }) => {
+const Dropdown = ({ containers, id, items, label, maxHeight, onSelect, selected }) => {
   const [open, setOpen] = useState(false);
   const [triggerLabel, setTriggerLabel] = useState('');
   const labelId = `${id}-label`;
@@ -42,17 +42,18 @@ const Dropdown = ({ id, items, label, onSelect, selected }) => {
         id={triggerId}
         label={triggerLabel}
         labelId={labelId}
-        onClick={(event) => {
-          console.info(event.type)
+        onClick={() => {
           setOpen(!open);
         }}
         open={open}
       />
       {open && (
         <DropdownList
+          containers={containers}
           id={`${id}-list`}
           items={items}
           labelId={labelId}
+          maxHeight={maxHeight}
           onSelect={(id, close = true, focusButton = true) => {
             selectCallback(id);
 
@@ -84,16 +85,20 @@ const getSelectedItem = (items, selected) => {
 };
 
 Dropdown.defaultProps = {
+  containers: null,
+  maxHeight: null,
   selected: null,
 };
 
 Dropdown.propTypes = {
+  containers: PropTypes.arrayOf(PropTypes.string),
   id: PropTypes.string.isRequired,
   items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
   })).isRequired,
   label: PropTypes.string.isRequired,
+  maxHeight: PropTypes.number,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.string,
 }

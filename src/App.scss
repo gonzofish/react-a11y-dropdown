@@ -1,0 +1,17 @@
+.App {
+  > .a11y-dropdown {
+    margin-bottom: 600px;
+    margin-top: 200px;
+  }
+
+  .scroller {
+    border: 2px solid black;
+    height: 300px;
+    overflow: auto;
+
+    .a11y-dropdown {
+      margin-bottom: 600px;
+      margin-top: 200px;
+    }
+  }
+}

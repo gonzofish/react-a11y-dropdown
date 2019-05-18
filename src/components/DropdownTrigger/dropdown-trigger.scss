@@ -1,17 +1,15 @@
-.dropdown-trigger {
-  button {
-    align-items: center;
-    display: inline-flex;
-    font-size: 1rem;
-    justify-content: space-between;
-    padding: 0.5rem;
+button.dropdown-trigger {
+  align-items: center;
+  display: inline-flex;
+  font-size: 1rem;
+  justify-content: space-between;
+  padding: 0.5rem;
 
-    &:focus {
-      border: 2px solid black;
-    }
+  &:focus {
+    border: 2px solid black;
   }
 
-  &--arrow:after {
+  .dropdown-trigger--arrow:after {
     content: '\25BE';
     font-size: 1.5rem;
     line-height: 0;
