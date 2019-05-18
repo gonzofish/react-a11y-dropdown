@@ -33,8 +33,6 @@ const SCROLLER_ITEMS = (() => {
     })
   }
 
-  console.info(items);
-
   return items;
 })()
 

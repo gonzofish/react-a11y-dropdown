@@ -27,11 +27,12 @@ const DropdownList = ({ containers, id, items, labelId, maxHeight, onSelect, sel
         containers,
       );
       focusList(list, triggerId);
+      scrollToItem(list, selected);
     } else {
       stopOutsideClick(outsideClick.current);
       stopWindowChange(scroll.current, containers);
     }
-  }, [triggerId, containers]);
+  }, [triggerId, containers, selected]);
 
   useEffect(() => {
     selectedIndex.current = items.findIndex((item) => item.id === selected);
@@ -43,7 +44,8 @@ const DropdownList = ({ containers, id, items, labelId, maxHeight, onSelect, sel
       aria-labelledby={labelId}
       className="dropdown-list"
       id={id}
-      onKeyDown={({ key }) => {
+      onKeyDown={(event) => {
+        const { key, target } = event;
         const index = selectedIndex.current;
         const lastIndex = items.length - 1;
         let newIndex = index + getIndexChange(key);
@@ -55,7 +57,13 @@ const DropdownList = ({ containers, id, items, labelId, maxHeight, onSelect, sel
         }
 
         if (newIndex !== index) {
-          onSelect(items[newIndex].id, false);
+          const nextId = items[newIndex].id;
+
+          event.stopPropagation();
+          event.preventDefault();
+
+          scrollToItem(target, nextId)
+          onSelect(nextId, false);
         } else if (key === 'Enter' || key === 'Escape') {
           onSelect(selected);
         }
@@ -178,6 +186,26 @@ const getIndexChange = (key) => {
       return 0;
   }
 };
+
+/**
+ *
+ * @param {HTMLElement} list - List holding items
+ * @param {string} itemId - ID of item to focus to
+ */
+const scrollToItem = (list, itemId) => {
+  const element = document.getElementById(`${list.id}-${itemId}`);
+
+  if (list.scrollHeight > list.clientHeight) {
+    const scrollBottom = list.clientHeight + list.scrollTop;
+    const elementBottom = element.offsetTop + list.offsetHeight;
+
+    if (elementBottom > scrollBottom) {
+      list.scrollTop = elementBottom - list.clientHeight;
+    } else if (element.offsetTop < list.scrollTop) {
+      list.scrollTop = element.offsetTop;
+    }
+  }
+}
 
 DropdownList.defaultProps = {
   containers: null,
